@@ -180,7 +180,7 @@ class Structure {
   }
 }
 
-const mapSize = 10;
+const mapSize = 30;
 const backgroundTile = "🟩";
 const waterTile = "🌊";
 
