@@ -1,3 +1,6 @@
+import "./noise.js";
+import "./astar.js";
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -39,7 +42,9 @@ function respawnCharacter(waterMap, character, target) {
       target.row = coordinateRandomizer(mapSize);
       target.column = coordinateRandomizer(mapSize);
     } while (waterMap[target.row][target.column] !== undefined);
+    return true;
   }
+  return false;
 }
 
 function arrayGenerator(mapSize) {
@@ -62,59 +67,19 @@ function backgroundGenerator(mapSize) {
   return background;
 }
 
-function waterGenerator(mapSize) {
+function waterGenerator(mapSize, scale, humidity) {
+  perlin.seed();
   let water = arrayGenerator(mapSize);
-  let x0 = coordinateRandomizer(mapSize);
-  let y0 = coordinateRandomizer(mapSize);
-
-  water[x0][y0] = waterTile;
-
-  let r = 3;
-  let x = r;
-  let y = 0;
-  let error = 1 - x;
-
-  while (x >= y) {
-    drawTile(water, x + x0, y + y0, waterTile);
-    drawTile(water, y + x0, x + y0, waterTile);
-    drawTile(water, -x + x0, y + y0, waterTile);
-    drawTile(water, -y + x0, x + y0, waterTile);
-    drawTile(water, -x + x0, -y + y0, waterTile);
-    drawTile(water, -y + x0, -x + y0, waterTile);
-    drawTile(water, x + x0, -y + y0, waterTile);
-    drawTile(water, y + x0, -x + y0, waterTile);
-    y++;
-
-    if (error < 0) {
-      error += 2 * y + 1;
-    } else {
-      x--;
-      error += 2 * (y - x + 1);
+  scale += 0.01;
+  for (let i = 0; i < mapSize; i++) {
+    for (let j = 0; j < mapSize; j++) {
+      if (
+        perlin.get((i / mapSize) * scale, (j / mapSize) * scale) + 1 <
+        humidity * 2
+      ) {
+        water[i][j] = waterTile;
+      }
     }
-  }
-
-  let border = [{ x: x0, y: y0 }];
-  let filled = [];
-
-  while (border.length !== 0) {
-    let i = 0;
-    console.log(border[i]);
-    let x = border[i].x;
-    let y = border[i].y;
-    if (checkBounds(water, x + 1, y) && water[x + 1][y] !== waterTile) {
-      border.push({ x: x + 1, y: y });
-    }
-    if (checkBounds(water, x - 1, y) && water[x - 1][y] !== waterTile) {
-      border.push({ x: x - 1, y: y });
-    }
-    if (checkBounds(water, x, y + 1) && water[x][y + 1] !== waterTile) {
-      border.push({ x: x, y: y + 1 });
-    }
-    if (checkBounds(water, x, y - 1) && water[x][y - 1] !== waterTile) {
-      border.push({ x: x, y: y - 1 });
-    }
-    water[x][y] = waterTile;
-    filled.push(border.shift());
   }
 
   return water;
@@ -145,7 +110,6 @@ async function mapRender(map, waterMap, characters) {
   // Render map in HTML
   let indexCanvas = document.getElementById("canvas");
   let renderedMap = "";
-
   for (let i = 0; i < map.length; i++) {
     for (let j = 0; j < map.length; j++) {
       renderedMap += canvas[i][j];
@@ -156,11 +120,31 @@ async function mapRender(map, waterMap, characters) {
   indexCanvas.innerHTML = renderedMap;
 }
 
-function followTarget(character, target) {
-  if (target.row !== character.row)
-    target.row > character.row ? character.row++ : character.row--;
-  if (target.column !== character.column)
-    target.column > character.column ? character.column++ : character.column--;
+function buildGraph(waterMap) {
+  let graph = arrayGenerator(waterMap.length);
+  for (let i = 0; i < waterMap.length; i++) {
+    for (let j = 0; j < waterMap.length; j++) {
+      graph[i][j] = waterMap[i][j] === undefined ? 1 : 0;
+    }
+  }
+
+  return graph;
+}
+
+function followTarget(character, target, graph) {
+  let startPoint = graph.grid[character.row][character.column];
+  let endPoint = graph.grid[target.row][target.column];
+
+  let path = astar.search(graph, startPoint, endPoint, {
+    heuristic: astar.heuristics.diagonal,
+  });
+  if (path.length > 0) {
+    character.row = path[0].x;
+    character.column = path[0].y;
+    return true;
+  } else {
+    return false;
+  }
 }
 
 class Character {
@@ -172,42 +156,70 @@ class Character {
   }
 }
 
-class Structure {
-  constructor(r, c, type) {
-    this.row = r;
-    this.column = c;
-    this.type = type;
-  }
-}
-
-const mapSize = 30;
-const backgroundTile = "🟩";
+const mapSize = 50;
+const backgroundTile = "🌾";
 const waterTile = "🌊";
 
-async function update() {
-  // Generate water map
-  const waterMap = waterGenerator(mapSize);
+// Generate water map
+let waterMap;
 
-  let dog = spawnCharacter(waterMap, "Dog", "🐕");
-  let cat = spawnCharacter(waterMap, "Cat", "🐈");
+// Generate graph
+let graph;
+let dog;
+let cat;
+let map;
+let heroes;
+let frame;
+let isIsolated;
 
-  let map = backgroundGenerator(mapSize);
-  let heroes = [dog, cat];
-  let frame = 0;
+let scene = {
+  start() {
+    // Generate water map
+    waterMap = waterGenerator(mapSize, 10, 0.5); // Humidity 0 to 0.5 is recomended
 
-  while (true) {
-    // Game logic
-    followTarget(dog, cat);
+    // Generate graph
+    graph = new Graph(buildGraph(waterMap), { diagonal: true });
 
-    // if (frame % 1.5 === 0) followHero(roma, dog);
-    respawnCharacter(waterMap, dog, cat);
+    dog = spawnCharacter(waterMap, "Dog", "🐕");
+    cat = spawnCharacter(waterMap, "Cat", "🐈");
 
-    // Render
-    mapRender(map, waterMap, heroes);
-    await sleep(500);
+    map = backgroundGenerator(mapSize);
+    heroes = [dog, cat];
+    frame = 0;
 
-    frame++;
-  }
+    isIsolated = false;
+  },
+
+  async update() {
+    let isRespawned = false;
+    do {
+      // Game logic
+      isIsolated = !followTarget(dog, cat, graph);
+
+      isRespawned = respawnCharacter(waterMap, dog, cat);
+      // Render
+      mapRender(map, waterMap, heroes);
+      await sleep(50); // Frame Rate
+
+      if (isRespawned) {
+        console.log(1);
+        await sleep(1000);
+        isRespawned = !isRespawned;
+      }
+
+      frame++;
+    } while (!isIsolated);
+    await sleep(1000);
+    console.log(0);
+    return 0;
+  },
+};
+
+async function gameCycle() {
+  do {
+    scene.start();
+    await scene.update();
+  } while (true);
 }
 
-update();
+gameCycle();
