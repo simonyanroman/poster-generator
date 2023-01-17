@@ -157,7 +157,7 @@ class Character {
 }
 
 const mapSize = 20;
-const backgroundTile = "🏝️";
+const backgroundTile = "🌾";
 const waterTile = "🌊";
 
 // Generate water map
