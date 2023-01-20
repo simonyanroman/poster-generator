@@ -4,31 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Dog wants to eat the cat, but it is too clever and fast</title>
-    <style>
-      body {
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        background: linear-gradient(to top left, #28b487, #7dd56f);
-      }
-      h1 {
-        font-family: sans-serif;
-        width: 100%;
-        padding: 5px;
-        text-align: center;
-        color: white;
-      }
-      .gameCanvas {
-        font-size: 13px;
-        line-height: 1;
-      }
-    </style>
+    <title></title>
   </head>
+  <style>
+    body::-webkit-scrollbar {
+      display: none;
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scrollbar-width: none;
+      /* Firefox */
+      /* position: relative; */
+    }
+
+    .background {
+      background-color: rgba(255, 255, 255, 0);
+      border: 1px solid rgb(0, 0, 0);
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+      margin: auto;
+    }
+    .poster {
+      display: inline;
+      border: 1px solid rgb(0, 0, 0);
+      image-rendering: optimizeQuality;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: absolute;
+      margin: auto;
+    }
+  </style>
   <body>
-    <h1 class="gameCanvas" id="canvas">ERROR</h1>
-    <script type="module" src="script.js"></script>
-    <script src="noise.js"></script>
-    <script src="astar.js"></script>
+    <canvas class="background" id="background"> </canvas>
+    <canvas class="poster" id="poster"> </canvas>
+    <button id="stopAnimation">Stop animation</button>
   </body>
+
+  <!-- <script type="module" src="script.js"></scrip> -->
+  <script src="perlin.js"></script>
+  <script src="astar.js"></script>
+  <script type="module" src="art.js"></script>
 </html>

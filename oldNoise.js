@@ -17,10 +17,10 @@ let perlin = {
     return d_vect.x * g_vect.x + d_vect.y * g_vect.y;
   },
   smootherstep: function (x) {
+    //return 6 * x ** 5 - 15 * x ** 4 + 10 * x ** 3;
     return 6 * x ** 5 - 15 * x ** 4 + 10 * x ** 3;
   },
   interp: function (x, a, b) {
-    // return a + this.smootherstep2(x) * (b - a);
     return a + this.smootherstep(x) * (b - a);
   },
   seed: function () {
