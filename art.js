@@ -55,11 +55,40 @@ let imageData;
 
 let posterMargin;
 
-function changePosterMargin(posterMargin) {
-  let frame = document.getElementsByClassName("background");
-  for (let i = 0; i < frame.length; i++) {
-    frame[i].style.padding = `${posterMargin}px`;
-  }
+function changeBorder(posterMargin, r, g, b, a) {
+  let frame = document.getElementById("poster");
+  frame.style = `border-width: ${posterMargin}px; border-style: solid; border-color: rgb(${r}, ${g}, ${b}, ${a})`;
+}
+
+function downloadPoster() {
+  let poster = document.getElementById("poster");
+  let finalPoster = document.createElement("canvas");
+  let context = finalPoster.getContext("2d");
+
+  let fPw = poster.width + posterMargin * 2;
+  let fPh = poster.height + posterMargin * 2;
+
+  finalPoster.width = fPw;
+  finalPoster.height = fPh;
+
+  context.drawImage(poster, posterMargin, posterMargin);
+  context.beginPath();
+  context.rect(0, 0, fPw, posterMargin);
+  context.fillStyle = "rgb(175, 64, 64, 255)";
+  context.fill();
+  context.rect(0, 0, posterMargin, fPh);
+  context.fill();
+  context.rect(0, fPh - posterMargin, fPw, posterMargin);
+  context.fill();
+  context.rect(fPw - posterMargin, 0, fPw, fPh);
+  context.fill();
+
+  let canvasUrl = finalPoster.toDataURL("image/png");
+  const createEl = document.createElement("a");
+  createEl.href = canvasUrl;
+  createEl.download = "My new poster";
+  createEl.click();
+  createEl.remove();
 }
 
 async function update() {
@@ -83,11 +112,7 @@ async function update() {
 
     posterMargin = document.getElementById("posterMargin").value;
 
-    changePosterMargin(posterMargin);
-    // Generate background frame
-    background.width = poster.width + posterMargin * 2;
-    background.height = poster.height + posterMargin * 2;
-    // document.getElementById("poster").style.margin - left;
+    changeBorder(posterMargin, 175, 64, 64, 255);
 
     imageData = ctx.createImageData(poster.width, poster.height);
 
@@ -101,5 +126,9 @@ document
   .addEventListener("click", function (e) {
     animationToggle();
   });
+
+document.getElementById("download").addEventListener("click", function (e) {
+  downloadPoster();
+});
 
 update();

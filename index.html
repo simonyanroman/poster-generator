@@ -20,19 +20,11 @@
       border: 1px solid rgb(0, 0, 0);
       position: relative;
     }
-    .background {
-      background-color: rgba(180, 44, 44, 255);
-      border: 1px solid rgb(0, 0, 0);
-      display: flex;
-      width: fit-content;
-    }
-    .poster {
-      border: 1px solid rgb(0, 0, 0);
-    }
 
-    img {
-      padding: 0;
-      margin: 0px;
+    .poster {
+      border-width: 50px;
+      border-style: solid;
+      border-color: rgb(175, 64, 64);
     }
   </style>
   <body>
@@ -64,9 +56,8 @@
       <input type="number" value="5" id="posterMargin" />
       <button id="download">Download</button>
     </div>
-    <div class="background" id="background">
-      <canvas class="poster" id="poster"> </canvas>
-    </div>
+
+    <canvas class="poster" id="poster"> </canvas>
   </body>
 
   <script src="perlin.js"></script>
