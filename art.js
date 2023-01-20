@@ -7,24 +7,8 @@ let ctx = poster.getContext("2d");
 
 let background = document.getElementById("background");
 
-// Set poster margin
-let posterMargin = 100;
-
-// Set poster size
-let posterWidth = 1000;
-let posterHeight = 300;
-
 // Get AspectRatio
-let aspectRatio = posterWidth / posterHeight;
-
-// Generate background frame
-background.width = posterWidth + posterMargin * 2;
-background.height = posterHeight + posterMargin * 2;
-
-poster.width = posterWidth;
-poster.height = posterHeight;
-
-let imageData = ctx.createImageData(poster.width, poster.height);
+let aspectRatio = poster.width / poster.height;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -67,13 +51,46 @@ function animationToggle() {
 let scale;
 let contrast;
 
+let imageData;
+
+let posterMargin;
+
+function changePosterMargin(posterMargin) {
+  let frame = document.getElementsByClassName("background");
+  for (let i = 0; i < frame.length; i++) {
+    frame[i].style.padding = `${posterMargin}px`;
+  }
+}
+
 async function update() {
   for (let t = 0; t < 100; t += increment) {
     // Set noise scale
     scale = document.getElementById("scale").value;
-
     // Set noise contrast
     contrast = document.getElementById("contrast").value;
+    // Set poster width
+    poster.width =
+      document.getElementById("posterWidth").value === 0 ||
+      document.getElementById("posterWidth").value === ""
+        ? 1
+        : document.getElementById("posterWidth").value;
+    // Set poster height
+    poster.height =
+      document.getElementById("posterHeight").value === 0 ||
+      document.getElementById("posterHeight").value === ""
+        ? 1
+        : document.getElementById("posterHeight").value;
+
+    posterMargin = document.getElementById("posterMargin").value;
+
+    changePosterMargin(posterMargin);
+    // Generate background frame
+    background.width = poster.width + posterMargin * 2;
+    background.height = poster.height + posterMargin * 2;
+    // document.getElementById("poster").style.margin - left;
+
+    imageData = ctx.createImageData(poster.width, poster.height);
+
     generatePoster(t);
     await sleep(16);
   }
@@ -84,5 +101,13 @@ document
   .addEventListener("click", function (e) {
     animationToggle();
   });
+
+let image = document.getElementById("background");
+let download = document.getElementById("download");
+download.onclick = function () {
+  html2canvas(document.body).then(function (canvas) {
+    document.body.appendChild(canvas);
+  });
+};
 
 update();

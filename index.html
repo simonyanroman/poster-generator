@@ -10,49 +10,63 @@
     body::-webkit-scrollbar {
       display: none;
       -ms-overflow-style: none;
-      /* IE and Edge */
       scrollbar-width: none;
-      /* Firefox */
-      /* position: relative; */
     }
-
-    .background {
-      background-color: rgba(255, 255, 255, 0);
+    .controls {
+      background-color: aquamarine;
+      display: flex;
+      margin: 10px;
+      padding: 10px;
       border: 1px solid rgb(0, 0, 0);
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      position: absolute;
-      margin: auto;
+      position: relative;
+    }
+    .background {
+      background-color: rgba(180, 44, 44, 255);
+      border: 1px solid rgb(0, 0, 0);
+      display: flex;
+      width: fit-content;
     }
     .poster {
-      display: inline;
       border: 1px solid rgb(0, 0, 0);
-      image-rendering: optimizeQuality;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      position: absolute;
-      margin: auto;
+    }
+
+    img {
+      padding: 0;
+      margin: 0px;
     }
   </style>
   <body>
-    <canvas class="background" id="background"> </canvas>
-    <canvas class="poster" id="poster"> </canvas>
-    <button id="stopAnimation">Stop animation</button>
-    <label>Noise scale:</label>
-    <input type="range" min="5" max="100" value="5" class="slider" id="scale" />
-    <label>Noise contrast:</label>
-    <input
-      type="range"
-      min="3"
-      max="30"
-      value="3"
-      class="slider"
-      id="contrast"
-    />
+    <div class="controls">
+      <button id="stopAnimation">Stop animation</button>
+      <label>Noise scale:</label>
+      <input
+        type="range"
+        min="5"
+        max="100"
+        value="5"
+        class="slider"
+        id="scale"
+      />
+      <label>Noise contrast:</label>
+      <input
+        type="range"
+        min="3"
+        max="30"
+        value="3"
+        class="slider"
+        id="contrast"
+      />
+      <label>Poster width (px):</label>
+      <input type="number" value="300" id="posterWidth" />
+      <label>Poster height (px):</label>
+      <input type="number" value="100" id="posterHeight" />
+      <label>Frame margin (px):</label>
+      <input type="number" value="5" id="posterMargin" />
+      <button id="download">Download</button>
+    </div>
+    <div class="background" id="background">
+      <canvas class="poster" id="poster"> </canvas>
+    </div>
   </body>
 
   <script src="perlin.js"></script>
