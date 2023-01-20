@@ -10,7 +10,7 @@ let background = document.getElementById("background");
 let posterWidth = 1000;
 let posterHeight = 300;
 
-let posterMargin = 50;
+let posterMargin = 100;
 
 // Get AspectRatio
 let aspectRatio = posterWidth / posterHeight;
