@@ -98,19 +98,24 @@ async function update() {
     // Set noise contrast
     contrast = document.getElementById("contrast").value;
     // Set poster width
+    posterMargin = document.getElementById("posterMargin").value;
+
     poster.width =
-      document.getElementById("posterWidth").value === 0 ||
-      document.getElementById("posterWidth").value === ""
+      document.getElementById("posterWidth").value <= 0 ||
+      document.getElementById("posterWidth").value - posterMargin * 2 === ""
         ? 1
-        : document.getElementById("posterWidth").value;
+        : document.getElementById("posterWidth").value - posterMargin * 2;
+    poster.width = poster.width / 0.0264583333;
     // Set poster height
     poster.height =
-      document.getElementById("posterHeight").value === 0 ||
-      document.getElementById("posterHeight").value === ""
+      document.getElementById("posterHeight").value <= 0 ||
+      document.getElementById("posterHeight").value - posterMargin * 2 === ""
         ? 1
-        : document.getElementById("posterHeight").value;
+        : document.getElementById("posterHeight").value - posterMargin * 2;
 
-    posterMargin = document.getElementById("posterMargin").value;
+    poster.height = poster.height / 0.0264583333;
+
+    posterMargin = document.getElementById("posterMargin").value / 0.0264583333;
 
     changeBorder(posterMargin, 175, 64, 64, 255);
 
