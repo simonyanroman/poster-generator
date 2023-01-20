@@ -102,12 +102,4 @@ document
     animationToggle();
   });
 
-let image = document.getElementById("background");
-let download = document.getElementById("download");
-download.onclick = function () {
-  html2canvas(document.body).then(function (canvas) {
-    document.body.appendChild(canvas);
-  });
-};
-
 update();
