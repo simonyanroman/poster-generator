@@ -7,10 +7,12 @@ let ctx = poster.getContext("2d");
 
 let background = document.getElementById("background");
 
+// Set poster margin
+let posterMargin = 100;
+
+// Set poster size
 let posterWidth = 1000;
 let posterHeight = 300;
-
-let posterMargin = 100;
 
 // Get AspectRatio
 let aspectRatio = posterWidth / posterHeight;
@@ -46,7 +48,7 @@ function generatePoster(t) {
         t
       );
       number = (number * contrast + 1) * 100;
-      number = Math.min(Math.max(number, 30), 244);
+      number = Math.min(Math.max(number, 0), 255);
       setPixel(x, y, number, number, number, 255);
     }
   }
@@ -61,18 +63,21 @@ function animationToggle() {
   increment = isAnimationStopped ? 0 : 0.01;
 }
 
+// Declare Scale and Contarts
+let scale;
+let contrast;
+
 async function update() {
   for (let t = 0; t < 100; t += increment) {
+    // Set noise scale
+    scale = document.getElementById("scale").value;
+
+    // Set noise contrast
+    contrast = document.getElementById("contrast").value;
     generatePoster(t);
     await sleep(16);
   }
 }
-
-// Set noise scale
-const scale = 10;
-
-// Set noise contrast
-const contrast = 3;
 
 document
   .getElementById("stopAnimation")
