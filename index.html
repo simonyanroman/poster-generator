@@ -7,29 +7,44 @@
     <title>Poster generator</title>
   </head>
   <style>
-    body::-webkit-scrollbar {
-      display: none;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .controls {
-      background-color: aquamarine;
+    body {
+      image-rendering: pixelated;
       display: flex;
-      margin: 10px;
-      padding: 10px;
-      border: 1px solid rgb(0, 0, 0);
-      position: relative;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 100px;
+      background-color: rgb(121, 79, 79);
     }
 
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 2px;
+      padding: 2px;
+      background-color: rgb(222, 156, 156);
+      border: 1px solid rgb(0, 0, 0);
+    }
+
+    .canvas {
+      display: contents;
+    }
     .poster {
-      border-width: 50px;
+      border-top-width: 0px;
+      border-bottom-width: 0px;
+      border-left-width: 0px;
+      border-right-width: 0px;
       border-style: solid;
-      border-color: rgb(175, 64, 64);
+      border-radius: 0px;
+      border-color: rgb(255, 255, 255);
+      top: 100px;
     }
   </style>
+
   <body>
     <div class="controls">
       <button id="stopAnimation">Stop animation</button>
+      <button id="download">Download</button>
       <label>Noise scale:</label>
       <input
         type="range"
@@ -48,19 +63,41 @@
         class="slider"
         id="contrast"
       />
+      <label>Corner radius:</label>
+      <input
+        type="range"
+        min="0"
+        max="30"
+        value="0"
+        class="slider"
+        id="cornerRadius"
+      />
       <label>Poster width (sm):</label>
-      <input type="number" value="30" id="posterWidth" />
+      <input type="number" value="120" id="posterWidth" />
       <label>Poster height (sm):</label>
-      <input type="number" value="10" id="posterHeight" />
-      <label>Frame margin (sm):</label>
-      <input type="number" value="1" id="posterMargin" />
-      <button id="download">Download</button>
+      <input type="number" value="40" id="posterHeight" />
+      <label>Frame width (sm):</label>
+      <input type="number" value="5" id="frameWidth" />
+      L<input type="checkbox" id="leftFrame" /> T<input
+        type="checkbox"
+        id="topFrame"
+      />
+      R<input type="checkbox" id="rightFrame" /> B<input
+        type="checkbox"
+        id="bottomFrame"
+      />
     </div>
 
-    <canvas class="poster" id="poster"> </canvas>
+    <div class="canvas" id="downloadable">
+      <canvas class="poster" id="poster"></canvas>
+    </div>
   </body>
 
   <script src="perlin.js"></script>
   <script src="astar.js"></script>
-  <script type="module" src="art.js"></script>
+  <script src="html2canvas.esm.js"></script>
+  <script src="html2canvas.js"></script>
+  <script src="html2canvas.min.js"></script>
+
+  <script type="module" src="test.js"></script>
 </html>
