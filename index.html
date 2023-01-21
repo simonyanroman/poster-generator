@@ -19,10 +19,10 @@
   <body>
     <div class="wrapper">
       <div class="controls">
-        <button id="stopAnimation">Stop animation</button>
-        <button id="download">Download</button>
-        <button id="seedRandom">Randomize</button>
-        <label>Noise scale:</label>
+        <button id="stopAnimation" class="text">Stop animation</button>
+        <button id="download" class="text">Download</button>
+        <button id="seedRandom" class="text">Randomize</button>
+        <label class="text">Noise scale:</label>
         <input
           type="range"
           min="5"
@@ -31,7 +31,7 @@
           class="slider"
           id="scale"
         />
-        <label>Noise contrast:</label>
+        <label class="text">Noise contrast:</label>
         <input
           type="range"
           min="3"
@@ -40,7 +40,7 @@
           class="slider"
           id="contrast"
         />
-        <!-- <label>Corner radius:</label>
+        <!-- <label class="text">Corner radius:</label>
         <input
           type="range"
           min="0"
@@ -49,18 +49,29 @@
           class="slider"
           id="cornerRadius"
         /> -->
-        <label>Poster width (sm):</label>
-        <input type="number" value="120" id="posterWidth" />
-        <label>Poster height (sm):</label>
-        <input type="number" value="40" id="posterHeight" />
-        <label>Frame width (sm):</label>
-        <input type="number" value="5" id="frameWidth" />
+        <label class="text">Poster width (sm):</label>
+        <select type="number" id="posterWidth">
+          <option value="140" class="text">140sm</option>
+          <option value="210" class="text">210sm</option>
+
+          <option value="120" class="text">120sm</option>
+          <option value="90" class="text">90sm</option>
+          <option value="70" class="text">70sm</option>
+        </select>
+        <label class="text">Poster height (sm):</label>
+        <select type="number" id="posterHeight">
+          <option value="30" class="text">30sm</option>
+          <option value="40" class="text">40sm</option>
+          <option value="70" class="text">70sm</option>
+        </select>
+        <label class="text">Frame width (sm):</label>
+        <input type="range" max="10" min="0" step="2.5" id="frameWidth" />
         <div class="checkbox__wrapper">
           <div class="checkbox__lable">
-            <label>L</label>
-            <label>T</label>
-            <label>R</label>
-            <label>B</label>
+            <label class="text">L</label>
+            <label class="text">T</label>
+            <label class="text">R</label>
+            <label class="text">B</label>
           </div>
           <div class="checkbox">
             <input type="checkbox" id="leftFrame" />

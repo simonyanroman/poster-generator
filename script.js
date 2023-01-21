@@ -111,9 +111,10 @@ function generatePoster(t) {
 
 // html2canvas poster downloader
 function downloadPoster() {
-  html2canvas(poster, { scale: posterScale }, { backgroundColor: null }).then(
-    function (canva) {
-      let canvasUrl = canva.toDataURL("image/png");
+  let actualScale = 11.8;
+  html2canvas(poster, { scale: actualScale }, { backgroundColor: null }).then(
+    function (canvas) {
+      let canvasUrl = canvas.toDataURL("image/png");
       const createEl = document.createElement("a");
       createEl.href = canvasUrl;
       createEl.download = "My new poster";
@@ -156,23 +157,21 @@ let leftFrameVisible,
   bottomFrameVisible = false;
 
 document.getElementById("frameWidth").addEventListener("change", function (e) {
-  if (this) {
-    leftFrameVisible === true
-      ? poster.style.setProperty("border-left-width", `${frameWidth}px`)
-      : poster.style.setProperty("border-left-width", "0px");
+  leftFrameVisible === true
+    ? poster.style.setProperty("border-left-width", `${frameWidth}px`)
+    : poster.style.setProperty("border-left-width", "0px");
 
-    topFrameVisible === true
-      ? poster.style.setProperty("border-top-width", `${frameWidth}px`)
-      : poster.style.setProperty("border-top-width", "0px");
+  topFrameVisible === true
+    ? poster.style.setProperty("border-top-width", `${frameWidth}px`)
+    : poster.style.setProperty("border-top-width", "0px");
 
-    rightFrameVisible === true
-      ? poster.style.setProperty("border-right-width", `${frameWidth}px`)
-      : poster.style.setProperty("border-right-width", "0px");
+  rightFrameVisible === true
+    ? poster.style.setProperty("border-right-width", `${frameWidth}px`)
+    : poster.style.setProperty("border-right-width", "0px");
 
-    bottomFrameVisible === true
-      ? poster.style.setProperty("border-bottom-width", `${frameWidth}px`)
-      : poster.style.setProperty("border-bottom-width", "0px");
-  }
+  bottomFrameVisible === true
+    ? poster.style.setProperty("border-bottom-width", `${frameWidth}px`)
+    : poster.style.setProperty("border-bottom-width", "0px");
 });
 
 document.getElementById("leftFrame").addEventListener("change", function (e) {
@@ -184,7 +183,6 @@ document.getElementById("leftFrame").addEventListener("change", function (e) {
     poster.style.setProperty("border-left-width", "0px");
   }
 });
-
 document.getElementById("topFrame").addEventListener("change", function (e) {
   if (this.checked) {
     topFrameVisible = true;
