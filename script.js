@@ -1,225 +1,216 @@
-// import "./noise.js";
-// import "./astar.js";
+// Generating and remembering the Seed
+let seed = Math.random();
 
-// function sleep(ms) {
-//   return new Promise((resolve) => setTimeout(resolve, ms));
-// }
+// Setting animation toggle
+let increment = 0.01;
+let isAnimationStopped = false;
 
-// function coordinateRandomizer(max) {
-//   let result = Math.floor(Math.random() * max);
-//   return result;
-// }
+// Recieve poster context
+let poster = document.getElementById("poster");
+let ctx = poster.getContext("2d");
 
-// function drawTile(canvas, x, y, tile) {
-//   let bound = canvas.length;
-//   if (y < 0 || x < 0 || x > bound - 1 || y > bound - 1) return;
-//   canvas[x][y] = tile;
-// }
+// Declare Scale and Contarst Global
+let scale;
+let contrast;
 
-// function checkBounds(canvas, x, y) {
-//   let bound = canvas.length;
-//   return !(y < 0 || x < 0 || x > bound - 1 || y > bound - 1);
-// }
+// Declare overall poster dimensions scale
+let posterScale = 10;
 
-// function spawnCharacter(waterMap, name, type) {
-//   let character = new Character(
-//     name,
-//     coordinateRandomizer(mapSize),
-//     coordinateRandomizer(mapSize),
-//     type
-//   );
-//   while (waterMap[character.row][character.column] !== undefined) {
-//     character.row = coordinateRandomizer(mapSize);
-//     character.column = coordinateRandomizer(mapSize);
-//   }
+// Declare Corner radius Global
+//let cornerRadius;
 
-//   return character;
-// }
+// Declare Aspect ratio Global
+let aspectRatio;
 
-// function respawnCharacter(waterMap, character, target) {
-//   if (character.row === target.row && character.column === target.column) {
-//     do {
-//       target.row = coordinateRandomizer(mapSize);
-//       target.column = coordinateRandomizer(mapSize);
-//     } while (waterMap[target.row][target.column] !== undefined);
-//     return true;
-//   }
-//   return false;
-// }
+// Declare Image data Global
+let imageData;
 
-// function arrayGenerator(mapSize) {
-//   let array = [];
-//   for (var i = 0; i < mapSize; i++) {
-//     array[i] = [];
-//   }
-//   return array;
-// }
+// Declare Frame
+let leftFrame, topFrame, rightFrame, bottomFrame;
+let frameWidth;
 
-// function backgroundGenerator(mapSize) {
-//   let background = arrayGenerator(mapSize);
+async function update() {
+  for (let t = 0; t < 100; t += increment) {
+    frameWidth = document.getElementById("frameWidth").value * posterScale;
 
-//   for (let i = 0; i < mapSize; i++) {
-//     for (let j = 0; j < mapSize; j++) {
-//       background[i][j] = backgroundTile;
-//     }
-//   }
+    // Get each frame width
+    leftFrame = poster.style
+      .getPropertyValue("border-left-width")
+      .replace("px", "");
+    topFrame = poster.style
+      .getPropertyValue("border-top-width")
+      .replace("px", "");
+    rightFrame = poster.style
+      .getPropertyValue("border-right-width")
+      .replace("px", "");
+    bottomFrame = poster.style
+      .getPropertyValue("border-bottom-width")
+      .replace("px", "");
 
-//   return background;
-// }
+    // Refreshing noise scale
+    scale = document.getElementById("scale").value;
+    // Refreshing noise contrast
+    contrast = document.getElementById("contrast").value;
+    // Refreshing corner radius
+    // cornerRadius = document.getElementById("cornerRadius").value * posterScale;
+    // poster.style.setProperty("border-radius", `${cornerRadius}px`);
 
-// function waterGenerator(mapSize, scale, humidity) {
-//   perlin.seed();
-//   let water = arrayGenerator(mapSize);
-//   scale += 0.01;
-//   for (let i = 0; i < mapSize; i++) {
-//     for (let j = 0; j < mapSize; j++) {
-//       if (
-//         perlin.get((i / mapSize) * scale, (j / mapSize) * scale) + 1 <
-//         humidity * 2
-//       ) {
-//         water[i][j] = waterTile;
-//       }
-//     }
-//   }
+    // Refreshing poster dimensions according to entered size and frames
+    poster.width =
+      document.getElementById("posterWidth").value * posterScale <= 0 ||
+      document.getElementById("posterWidth").value * posterScale === ""
+        ? 1
+        : document.getElementById("posterWidth").value * posterScale -
+          leftFrame -
+          rightFrame;
+    poster.height =
+      document.getElementById("posterHeight").value * posterScale <= 0 ||
+      document.getElementById("posterHeight").value * posterScale === ""
+        ? 1
+        : document.getElementById("posterHeight").value * posterScale -
+          topFrame -
+          bottomFrame;
+    // Refrashing Image Data dimensions
+    imageData = ctx.createImageData(poster.width, poster.height);
 
-//   return water;
-// }
+    generatePoster(t);
 
-// async function mapRender(map, waterMap, characters) {
-//   // Generating canvas
-//   let canvas = arrayGenerator(map.length);
-//   for (let i = 0; i < map.length; i++) {
-//     for (let j = 0; j < map.length; j++) {
-//       canvas[i][j] = map[i][j];
-//     }
-//   }
+    await sleep(33);
+  }
+}
 
-//   // Adding water map to canvas
-//   for (let i = 0; i < map.length; i++) {
-//     for (let j = 0; j < map.length; j++) {
-//       if (waterMap[i][j] !== undefined) canvas[i][j] = waterMap[i][j];
-//     }
-//   }
+function seedRandom() {
+  seed = Math.random();
+}
 
-//   //Characters spawn
-//   for (const i in characters) {
-//     const character = characters[i];
-//     canvas[character.row][character.column] = character.type;
-//   }
+function setPixel(x, y, r, g, b, a) {
+  var index = 4 * (x + y * imageData.width);
+  imageData.data[index + 0] = r;
+  imageData.data[index + 1] = g;
+  imageData.data[index + 2] = b;
+  imageData.data[index + 3] = a;
+}
 
-//   // Render map in HTML
-//   let indexCanvas = document.getElementById("canvas");
-//   let renderedMap = "";
-//   for (let i = 0; i < map.length; i++) {
-//     for (let j = 0; j < map.length; j++) {
-//       renderedMap += canvas[i][j];
-//     }
-//     renderedMap += "<br>";
-//   }
+function generatePoster(t) {
+  aspectRatio = poster.width / poster.height;
+  noise.seed(seed);
+  for (let x = 0; x < poster.width; x++) {
+    for (let y = 0; y < poster.height; y++) {
+      let number = noise.perlin3(
+        (x / poster.width) * scale,
+        ((y / poster.height) * scale) / aspectRatio,
+        t
+      );
+      number = (number * contrast + 1) * 100;
+      number = Math.min(Math.max(number, 0), 255);
+      setPixel(x, y, number, number, number, 255);
+    }
+  }
+  ctx.putImageData(imageData, 0, 0);
+}
 
-//   indexCanvas.innerHTML = renderedMap;
-// }
+// html2canvas poster downloader
+function downloadPoster() {
+  html2canvas(poster, { scale: posterScale }, { backgroundColor: null }).then(
+    function (canva) {
+      let canvasUrl = canva.toDataURL("image/png");
+      const createEl = document.createElement("a");
+      createEl.href = canvasUrl;
+      createEl.download = "My new poster";
+      createEl.click();
+      createEl.remove();
+    }
+  );
+}
 
-// function buildGraph(waterMap) {
-//   let graph = arrayGenerator(waterMap.length);
-//   for (let i = 0; i < waterMap.length; i++) {
-//     for (let j = 0; j < waterMap.length; j++) {
-//       graph[i][j] = waterMap[i][j] === undefined ? 1 : 0;
-//     }
-//   }
+function animationToggle() {
+  isAnimationStopped = !isAnimationStopped;
+  increment = isAnimationStopped ? 0 : 0.01;
+}
 
-//   return graph;
-// }
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-// function followTarget(character, target, graph) {
-//   let startPoint = graph.grid[character.row][character.column];
-//   let endPoint = graph.grid[target.row][target.column];
+// Waiting to download poster
+document.getElementById("download").addEventListener("click", function (e) {
+  downloadPoster();
+});
 
-//   let path = astar.search(graph, startPoint, endPoint, {
-//     heuristic: astar.heuristics.diagonal,
-//   });
-//   if (path.length > 0) {
-//     character.row = path[0].x;
-//     character.column = path[0].y;
-//     return true;
-//   } else {
-//     return false;
-//   }
-// }
+// Waiting to randomize seed
+document.getElementById("seedRandom").addEventListener("click", function (e) {
+  seedRandom();
+});
 
-// class Character {
-//   constructor(name, r, c, type) {
-//     this.name = name;
-//     this.row = r;
-//     this.column = c;
-//     this.type = type;
-//   }
-// }
+// Waiting to stop animation
+document
+  .getElementById("stopAnimation")
+  .addEventListener("click", function (e) {
+    animationToggle();
+  });
 
-// const mapSize = 20;
-// const backgroundTile = "🌾";
-// const waterTile = "🌊";
+// Looking for frames
+let leftFrameVisible,
+  topFrameVisible,
+  rightFrameVisible,
+  bottomFrameVisible = false;
 
-// // Generate water map
-// let waterMap;
+document.getElementById("frameWidth").addEventListener("change", function (e) {
+  if (this) {
+    leftFrameVisible === true
+      ? poster.style.setProperty("border-left-width", `${frameWidth}px`)
+      : poster.style.setProperty("border-left-width", "0px");
 
-// // Generate graph
-// let graph;
-// let dog;
-// let cat;
-// let map;
-// let heroes;
-// let frame;
-// let isIsolated;
+    topFrameVisible === true
+      ? poster.style.setProperty("border-top-width", `${frameWidth}px`)
+      : poster.style.setProperty("border-top-width", "0px");
 
-// let scene = {
-//   start() {
-//     // Generate water map
-//     waterMap = waterGenerator(mapSize, 10, 0.5); // Humidity 0 to 0.5 is recomended
+    rightFrameVisible === true
+      ? poster.style.setProperty("border-right-width", `${frameWidth}px`)
+      : poster.style.setProperty("border-right-width", "0px");
 
-//     // Generate graph
-//     graph = new Graph(buildGraph(waterMap), { diagonal: true });
+    bottomFrameVisible === true
+      ? poster.style.setProperty("border-bottom-width", `${frameWidth}px`)
+      : poster.style.setProperty("border-bottom-width", "0px");
+  }
+});
 
-//     dog = spawnCharacter(waterMap, "Dog", "🐕");
-//     cat = spawnCharacter(waterMap, "Cat", "🐈");
+document.getElementById("leftFrame").addEventListener("change", function (e) {
+  if (this.checked) {
+    leftFrameVisible = true;
+    poster.style.setProperty("border-left-width", `${frameWidth}px`);
+  } else {
+    leftFrameVisible = false;
+    poster.style.setProperty("border-left-width", "0px");
+  }
+});
 
-//     map = backgroundGenerator(mapSize);
-//     heroes = [dog, cat];
-//     frame = 0;
+document.getElementById("topFrame").addEventListener("change", function (e) {
+  if (this.checked) {
+    topFrameVisible = true;
+    poster.style.setProperty("border-top-width", `${frameWidth}px`);
+  } else {
+    topFrameVisible = false;
+    poster.style.setProperty("border-top-width", "0px");
+  }
+});
+document.getElementById("rightFrame").addEventListener("change", function (e) {
+  if (this.checked) {
+    rightFrameVisible = true;
+    poster.style.setProperty("border-right-width", `${frameWidth}px`);
+  } else {
+    rightFrameVisible = false;
+    poster.style.setProperty("border-right-width", "0px");
+  }
+});
+document.getElementById("bottomFrame").addEventListener("change", function (e) {
+  if (this.checked) {
+    bottomFrameVisible = true;
+    poster.style.setProperty("border-bottom-width", `${frameWidth}px`);
+  } else {
+    bottomFrameVisible = false;
+    poster.style.setProperty("border-bottom-width", "0px");
+  }
+});
 
-//     isIsolated = false;
-//   },
-
-//   async update() {
-//     let isRespawned = false;
-//     do {
-//       // Game logic
-//       isIsolated = !followTarget(dog, cat, graph);
-
-//       isRespawned = respawnCharacter(waterMap, dog, cat);
-//       // Render
-//       mapRender(map, waterMap, heroes);
-//       await sleep(50); // Frame Rate
-
-//       if (isRespawned) {
-//         console.log(1);
-//         await sleep(1000);
-//         isRespawned = !isRespawned;
-//       }
-
-//       frame++;
-//     } while (!isIsolated);
-//     await sleep(1000);
-//     console.log(0);
-//     return 0;
-//   },
-// };
-
-// async function gameCycle() {
-//   do {
-//     scene.start();
-//     await scene.update();
-//   } while (true);
-// }
-
-// gameCycle();
+update();

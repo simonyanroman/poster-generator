@@ -4,100 +4,76 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link href="./style.css" rel="stylesheet" type="text/css" />
+
+    <script src="perlin.js"></script>
+    <script src="html2canvas.esm.js"></script>
+    <script src="html2canvas.js"></script>
+    <script src="html2canvas.min.js"></script>
+
+    <script type="module" src="script.js"></script>
+
     <title>Poster generator</title>
   </head>
-  <style>
-    body {
-      image-rendering: pixelated;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      gap: 100px;
-      background-color: rgb(121, 79, 79);
-    }
-
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      gap: 2px;
-      padding: 2px;
-      background-color: rgb(222, 156, 156);
-      border: 1px solid rgb(0, 0, 0);
-    }
-
-    .canvas {
-      display: contents;
-    }
-    .poster {
-      border-top-width: 0px;
-      border-bottom-width: 0px;
-      border-left-width: 0px;
-      border-right-width: 0px;
-      border-style: solid;
-      border-radius: 0px;
-      border-color: rgb(255, 255, 255);
-      top: 100px;
-    }
-  </style>
 
   <body>
-    <div class="controls">
-      <button id="stopAnimation">Stop animation</button>
-      <button id="download">Download</button>
-      <label>Noise scale:</label>
-      <input
-        type="range"
-        min="5"
-        max="100"
-        value="5"
-        class="slider"
-        id="scale"
-      />
-      <label>Noise contrast:</label>
-      <input
-        type="range"
-        min="3"
-        max="30"
-        value="3"
-        class="slider"
-        id="contrast"
-      />
-      <label>Corner radius:</label>
-      <input
-        type="range"
-        min="0"
-        max="30"
-        value="0"
-        class="slider"
-        id="cornerRadius"
-      />
-      <label>Poster width (sm):</label>
-      <input type="number" value="120" id="posterWidth" />
-      <label>Poster height (sm):</label>
-      <input type="number" value="40" id="posterHeight" />
-      <label>Frame width (sm):</label>
-      <input type="number" value="5" id="frameWidth" />
-      L<input type="checkbox" id="leftFrame" /> T<input
-        type="checkbox"
-        id="topFrame"
-      />
-      R<input type="checkbox" id="rightFrame" /> B<input
-        type="checkbox"
-        id="bottomFrame"
-      />
-    </div>
+    <div class="wrapper">
+      <div class="controls">
+        <button id="stopAnimation">Stop animation</button>
+        <button id="download">Download</button>
+        <button id="seedRandom">Randomize</button>
+        <label>Noise scale:</label>
+        <input
+          type="range"
+          min="5"
+          max="100"
+          value="5"
+          class="slider"
+          id="scale"
+        />
+        <label>Noise contrast:</label>
+        <input
+          type="range"
+          min="3"
+          max="30"
+          value="3"
+          class="slider"
+          id="contrast"
+        />
+        <!-- <label>Corner radius:</label>
+        <input
+          type="range"
+          min="0"
+          max="30"
+          value="0"
+          class="slider"
+          id="cornerRadius"
+        /> -->
+        <label>Poster width (sm):</label>
+        <input type="number" value="120" id="posterWidth" />
+        <label>Poster height (sm):</label>
+        <input type="number" value="40" id="posterHeight" />
+        <label>Frame width (sm):</label>
+        <input type="number" value="5" id="frameWidth" />
+        <div class="checkbox__wrapper">
+          <div class="checkbox__lable">
+            <label>L</label>
+            <label>T</label>
+            <label>R</label>
+            <label>B</label>
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" id="leftFrame" />
+            <input type="checkbox" id="topFrame" />
+            <input type="checkbox" id="rightFrame" />
+            <input type="checkbox" id="bottomFrame" />
+          </div>
+        </div>
+      </div>
 
-    <div class="canvas" id="downloadable">
-      <canvas class="poster" id="poster"></canvas>
+      <div class="canvas" id="downloadable">
+        <canvas class="poster" id="poster"></canvas>
+      </div>
     </div>
   </body>
-
-  <script src="perlin.js"></script>
-  <script src="astar.js"></script>
-  <script src="html2canvas.esm.js"></script>
-  <script src="html2canvas.js"></script>
-  <script src="html2canvas.min.js"></script>
-
-  <script type="module" src="test.js"></script>
 </html>
