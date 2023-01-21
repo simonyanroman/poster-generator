@@ -2,6 +2,7 @@ body {
   image-rendering: optimizeQuality;
   background-color: rgb(121, 79, 79);
   overflow: hidden;
+  max-width: 100%;
 }
 
 .text {
@@ -18,10 +19,17 @@ body {
 .controls {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 2px;
   padding: 2px;
   background-color: rgb(222, 156, 156);
   border: 1px solid rgb(0, 0, 0);
+}
+
+@media (min-width: 768px) {
+  .constrols {
+    flex-wrap: wrap;
+  }
 }
 
 .checkbox__wrapper {
