@@ -1,8 +1,7 @@
 body {
   image-rendering: optimizeQuality;
-  background-color: rgb(121, 79, 79);
+  background-color: rgb(214, 89, 17);
   overflow: hidden;
-  max-width: 100%;
 }
 
 .text {
@@ -22,14 +21,8 @@ body {
   flex-wrap: wrap;
   gap: 2px;
   padding: 2px;
-  background-color: rgb(222, 156, 156);
+  background-color: rgb(227, 123, 67);
   border: 1px solid rgb(0, 0, 0);
-}
-
-@media (min-width: 768px) {
-  .constrols {
-    flex-wrap: wrap;
-  }
 }
 
 .checkbox__wrapper {
@@ -62,5 +55,5 @@ body {
   border-right-width: 0px;
   border-style: solid;
   border-radius: 0px;
-  border-color: rgb(255, 255, 255);
+  border-color: rgb(215, 215, 215);
 }
